@@ -1412,13 +1412,15 @@ The dead time for coincidences works in the same way as that acting on the *sing
 Coincidence buffers
 ~~~~~~~~~~~~~~~~~~~
 It simulates the operation of a detector by modeling coincidences, transfer speed limits, and data loss due to buffer capacity overflows. It manages a memory buffer for coincidence events, allowing for the modeling of data loss due to buffer overflow. It uses a read frequency and allows defining the buffer size and read mode, influencing how events are processed. There are two buffer operation modes. Mode 1 empties the entire buffer at each read clock tick, while Mode 0 reads events one by one.
+Here is an example of how to configure this in a macro file:
 
-Example::
+**Example** ::
 
-/gate/digitizerMgr/CoincidenceDigitizer/finalCoinc/insert Buffer
-/gate/digitizerMgr/CoincidenceDigitizer/finalCoinc/Buffer/setBufferSize 64 B
-/gate/digitizerMgr/CoincidenceDigitizer/finalCoinc/Buffer/setReadFrequency 10 MHz
-/gate/digitizerMgr/CoincidenceDigitizer/finalCoinc/Buffer/setMode 1
+
+  /gate/digitizerMgr/CoincidenceDigitizer/finalCoinc/insert Buffer
+  /gate/digitizerMgr/CoincidenceDigitizer/finalCoinc/Buffer/setBufferSize 64 B
+  /gate/digitizerMgr/CoincidenceDigitizer/finalCoinc/Buffer/setReadFrequency 10 MHz
+  /gate/digitizerMgr/CoincidenceDigitizer/finalCoinc/Buffer/setMode 1
 
 
 For a coincidence sorter user can chose a presort buffer with a following command: 
@@ -1432,11 +1434,28 @@ A presort buffer contains singles that have not yet been checked for coincidence
 Multiple coincidence removal
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-If the multiple coincidences are kept and not split into pairs (i.e., if any of the **keepXXX** multiple coincidence policies are used), the multicoincidences could contribute to dataflow occupancy but cannot be written to the disk. Unless otherwise specified, any multicoincidence is then cleared from data just before the disk writing. If needed, this clearing could be performed at any earlier coincidence processing step by inserting the **multipleKiller** module at the required level. This module has no parameters and simply removes the multicoincidence events. Multiple coincidences split into many pairs are not affected by this module and cannot be distinguished from normal "simple" coincidences. To insert a multipleKiller, use the syntax::
-
+If the multiple coincidences are kept and not split into pairs (i.e., if any of the **keepXXX** multiple coincidence policies are used), the multicoincidences could contribute to dataflow occupancy but cannot be written to the disk. Unless otherwise specified, any multicoincidence is then cleared from data just before the disk writing. If needed, this clearing could be performed at any earlier coincidence processing step by inserting the **MultiplesKiller** module at the required level. This module has no parameters and simply removes the multicoincidence events. Multiple coincidences split into many pairs are not affected by this module and cannot be distinguished from normal "simple" coincidences. To insert a multipleKiller, use the syntax ::
 
 /gate/digitizerMgr/CoincidenceDigitizer/finalCoinc/insert MultiplesKiller
 
+
+
+Coincidence Time Difference Selector
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Responsible for selecting events based on the time difference between input signals.
+Here is an example of how to configure this in a macro file:
+
+
+**Example** ::
+
+
+  /gate/digitizerMgr/CoincidenceDigitizer/finalCoinc/insert timeDiffSelector
+  /gate/digitizerMgr/CoincidenceDigitizer/finalCoinc/timeDiffSelector/setMin 1 ns
+  /gate/digitizerMgr/CoincidenceDigitizer/finalCoinc/timeDiffSelector/setMax 100 ns
+
+
+These commands configure the `Coincidence Time Difference Selector` to keep only the events where the time difference is between 1 nanosecond and 100 nanoseconds. Events outside this range will be ignored.
 
 Example of a digitizer setting
 ------------------------------
